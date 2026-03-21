@@ -3,5 +3,8 @@
 *.egg-info/
 venv/
 __pycache__/
+logs/
+*.log
+catboost_info/
 
 
