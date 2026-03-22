@@ -8,5 +8,3 @@ xgboost
 catboost
 flask
 
--e .
-
