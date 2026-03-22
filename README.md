@@ -1,85 +1,44 @@
-# End-to-End ML Project — Student Performance
+# Student Math Score Prediction
 
-Machine learning project for predicting student math scores based on demographic data and results in reading and writing.
+Regression pipeline and Flask app predicting **math score** from demographics and reading/writing scores. Training outputs `artifacts/model.pkl` and `artifacts/preprocessor.pkl`; inference is served via `PredictPipeline`.
 
-## Description
+## Stack
 
-The Students Performance dataset contains information about students:
-- **Features:** gender, race/ethnicity, parental level of education, lunch type, test preparation course, reading and writing scores
-- **Target variable:** math score
+**ML:** Python 3, pandas, NumPy, scikit-learn, XGBoost, CatBoost, dill · **App:** Flask, Jinja2 · **Notebooks:** Jupyter, seaborn · **Optional:** kagglehub  
 
-## Project Structure
+**Ops:** venv, pip, Git · **AWS:** AWS CLI, EB CLI · **Containers:** Docker, ECR, ECS/Fargate or EB Docker
 
-```
-end-to-end-ml-project-1/
-├── notebook/              # Jupyter notebooks
-│   ├── 1 . EDA STUDENT PERFORMANCE .ipynb   # Exploratory data analysis
-│   └── 2. MODEL TRAINING.ipynb               # Model training
-├── src/
-│   ├── components/
-│   │   ├── data_ingestion.py      # Data loading and splitting
-│   │   ├── data_transformation.py # Preprocessing (numerical + categorical)
-│   │   └── model_trainer.py      # Model training
-│   ├── pipeline/
-│   │   ├── train_pipeline.py      # Full training pipeline
-│   │   └── predict_pipeline.py   # Prediction pipeline
-│   ├── utils.py                  # Utilities (save_object, load_object)
-│   ├── logger.py
-│   └── exceptions.py
-├── artifacts/              # Processing outputs
-│   ├── train_data.csv
-│   ├── test_data.csv
-│   ├── raw_data.csv
-│   └── preprocessor.pkl
-├── StudentsPerformance.csv # Raw data
-├── requirements.txt
-└── setup.py
-```
-
-## Installation
+## Setup & run
 
 ```bash
-# Clone the repository and navigate to the project folder
-cd end-to-end-ml-project-1
-
-# Create a virtual environment
-python -m venv .venv
-source .venv/bin/activate  # Linux/macOS
-# or: .venv\Scripts\activate  # Windows
-
-# Install dependencies
+python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## Usage
-
-### 1. Data Ingestion — loading and splitting data
-
-Reads `StudentsPerformance.csv`, splits into train/test (80/20), and saves to `artifacts/`:
+**Train** (ingestion → preprocess → train; requires `StudentsPerformance.csv` in project root):
 
 ```bash
 python src/components/data_ingestion.py
 ```
 
-### 2. Data Transformation — preprocessing
-
-Applies numerical and categorical transformations, saves the preprocessor:
+**Serve** (default `http://0.0.0.0:8080`, form at `/predictdata`):
 
 ```bash
-python src/components/data_transformation.py
+python application.py
 ```
 
-> Make sure to run Data Ingestion first (`artifacts/train_data.csv` and `artifacts/test_data.csv` must exist).
+Production: `gunicorn -b 0.0.0.0:8080 application:application` (add `gunicorn` to dependencies).
 
-## Technologies
+## Deploy
 
-- **Python 3**
-- **pandas** — data manipulation
-- **scikit-learn** — preprocessing, models, train_test_split
-- **dill** — object serialization (preprocessor, models)
-- **numpy** — arrays
+| Target | Notes |
+|--------|--------|
+| **Elastic Beanstalk** | `.ebextensions/python.config` sets `WSGIPath: application:application`. `eb init` → `eb create` / `eb deploy`. Optional `Procfile`: `web: gunicorn --bind 0.0.0.0:8080 application:application`. Ship `artifacts/` with the bundle or fetch at deploy. |
+| **EC2** | Clone repo, venv, `pip install -r requirements.txt`, ensure `artifacts/` present or retrain. Run Gunicorn behind nginx; open SG for 80/443 or app port. |
+| **Docker** | Build image with `requirements.txt`, `src/`, `application.py`, `templates/`, `artifacts/`. Push to **ECR**; run on **ECS**, **EKS**, or EB multi-container. Use Gunicorn in `CMD` for production. |
 
-## Contact
+Use IAM roles for AWS access; keep secrets out of the repo.
 
-Author: Anastasiia  
-Email: aasharovaa@gmail.com
+## Author
+
+Anastasiia · aasharovaa@gmail.com
