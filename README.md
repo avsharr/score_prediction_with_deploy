@@ -1,12 +1,13 @@
 # Student Math Score Prediction
 
-Regression pipeline and Flask app predicting **math score** from demographics and reading/writing scores. Training outputs `artifacts/model.pkl` and `artifacts/preprocessor.pkl`; inference is served via `PredictPipeline`.
-
+Regression pipeline and Flask app predicting **math score** from demographics and reading/writing scores. 
 ## Stack
 
-**ML:** Python 3, pandas, NumPy, scikit-learn, XGBoost, CatBoost, dill · **App:** Flask, Jinja2 · **Notebooks:** Jupyter, seaborn · **Optional:** kagglehub  
-
-**Ops:** venv, pip, Git · **AWS:** AWS CLI, EB CLI · **Containers:** Docker, ECR, ECS/Fargate or EB Docker
+**ML:** Python 3, pandas, NumPy, scikit-learn, XGBoost, CatBoost, dill · 
+**App:** Flask
+**Ops:** venv, pip, Git · 
+**AWS:** AWS CLI, EB CLI · 
+**Containers:** Docker, ECR, ECS/Fargate or EB Docker
 
 ## Setup & run
 
